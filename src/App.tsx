@@ -61,28 +61,6 @@ const MainLayout: React.FC = () => {
         听辨无碍 · 妙语连珠
       </div>
 
-      {/* Traditional Chinese Top Ribbon */}
-      <div className="bg-gradient-to-r from-red-900 via-red-800 to-amber-900 text-amber-100 text-[11px] py-1.5 px-4 shadow-xs relative z-50 border-b border-red-950/40">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="chinese-seal text-[10px] bg-red-100/90 text-red-900 border-red-300 font-bold px-1.5 py-0.5">
-              华语
-            </span>
-            <span className="font-semibold text-amber-50">
-              🏮 Lớp Tiếng Trung HSK 1-2 · 10 Học viên chính thức (HSK 1-2 汉语听说学堂)
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 text-amber-200/90 text-[11px]">
-            <span className="hidden sm:inline">
-              🎙️ Giọng đọc bài nghe chuẩn Tiếng Trung (Phát âm rõ ràng · Ngữ điệu tự nhiên)
-            </span>
-            <span className="text-amber-300/80 font-medium">
-              Đồng bộ tức thì Học sinh & Giáo viên
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* Top Bar Navigation */}
       <Navbar onOpenFeedbackModal={subId => setActiveFeedbackSubmissionId(subId)} />
@@ -168,29 +146,6 @@ const MainLayout: React.FC = () => {
         </div>
       )}
 
-      {/* Footer with Chinese Educational Aesthetics */}
-      <footer className="bg-white/90 backdrop-blur-md border-t border-amber-200/60 py-6 mt-auto relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-          <div className="flex items-center gap-2">
-            <span className="chinese-seal text-xs font-bold bg-red-50 text-red-800 border-red-300">
-              汉语
-            </span>
-            <span className="font-bold text-slate-800">EduListen · 华语学堂</span>
-            <span>·</span>
-            <span>Hệ thống Luyện nghe & Thu âm Trả lời Tiếng Trung Trực Tuyến</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-3 text-slate-500">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Đồng bộ tức thì giáo viên & học sinh
-            </span>
-            <span>·</span>
-            <span>Thu âm học sinh & Ghi âm nhận xét của cô giáo</span>
-            <span>·</span>
-            <span>Giọng đọc nam/nữ chuẩn Bắc Kinh</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
