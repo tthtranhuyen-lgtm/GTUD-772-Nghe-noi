@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Fix for "Cannot set property fetch of #<Window> which has only a getter"
+      (function() {
+        try {
+          var originalFetch = window.fetch ? window.fetch.bind(window) : null;
+          var currentFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return currentFetch;
+            },
+            set: function(val) {
+              currentFetch = val;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          // ignore if already configured
+        }
+
+        // Prevent uncaught errors from stopping script execution
+        window.addEventListener('error', function(e) {
+          if (e && e.message && e.message.indexOf('fetch') !== -1 && e.message.indexOf('getter') !== -1) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+        });
+      })();
+    </script>
+    <title>EduListen - Luyện nghe & Trả lời bằng Giọng nói</title>
+    <meta name="description" content="Nền tảng luyện nghe trực tuyến có chức năng ghi âm câu trả lời, giáo viên chấm điểm trực tiếp và theo dõi tiến độ học sinh toàn diện." />
+    <meta property="og:title" content="EduListen - Luyện nghe & Trả lời bằng Giọng nói" />
+    <meta property="og:description" content="Nền tảng luyện nghe trực tuyến có chức năng ghi âm câu trả lời, giáo viên chấm điểm trực tiếp và theo dõi tiến độ học sinh toàn diện." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  </head>
+  <body class="font-sans antialiased text-slate-900 selection:bg-rose-500/20 selection:text-rose-950 bg-[#faf8f5]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

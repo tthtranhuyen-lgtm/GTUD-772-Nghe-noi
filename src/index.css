@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #faf5ed;
+    color: #1e293b;
+    position: relative;
+    overflow-x: hidden;
+  }
+}
+
+.font-chinese {
+  font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', 'Songti SC', 'SimSun', serif;
+}
+
+/* Chinese Paper / Parchment with subtle ink grain */
+.chinese-theme-bg {
+  background-color: #faf5ed;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(185, 28, 28, 0.05) 0px, transparent 40%),
+    radial-gradient(at 100% 0%, rgba(217, 119, 6, 0.05) 0px, transparent 40%),
+    radial-gradient(at 50% 100%, rgba(185, 28, 28, 0.04) 0px, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23991b1b' fill-opacity='0.025' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Oriental Chinese Lattice Window Pattern (Hoa văn cách hoa truyền thống) */
+.chinese-lattice-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 0l24 24-24 24L0 24 24 0zm0 5.656L5.656 24 24 42.344 42.344 24 24 5.656zM24 12l12 12-12 12-12-12 12-12z' fill='%23b91c1c' fill-opacity='0.035' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Chinese Cloud Pattern (Hoa văn mây cát tường 祥云) */
+.chinese-cloud-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='40' viewBox='0 0 80 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20c0-6 5-10 11-10 4 0 8 2 10 6 2-3 5-5 9-5 6 0 11 5 11 11 0 1 0 2-.5 3H65c5 0 9 4 9 9s-4 9-9 9H18c-6 0-11-5-11-11s5-11 11-11h2z' fill='%23d97706' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Traditional Chinese Calligraphy Floating Watermark */
+.chinese-watermark {
+  position: fixed;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  pointer-events: none;
+  user-select: none;
+  color: rgba(185, 28, 28, 0.035);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.5em;
+  z-index: 0;
+}
+
+/* Chinese Seal Stamp (Con Dấu Thư Pháp Ấn Chương) */
+.chinese-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #b91c1c;
+  color: #b91c1c;
+  background: rgba(254, 242, 242, 0.85);
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1;
+  box-shadow: inset 0 0 4px rgba(185, 28, 28, 0.2);
+}
+
+/* Chinese scroll aesthetic card with subtle cinnabar ribbon */
+.chinese-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #f1e7d8;
+  box-shadow: 0 4px 20px -2px rgba(136, 19, 19, 0.04);
+}
+
+.chinese-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #b91c1c 0%, #d97706 50%, #b91c1c 100%);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f7f1e5;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6c6b2;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bda68e;
+}

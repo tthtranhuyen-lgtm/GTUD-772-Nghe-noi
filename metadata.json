@@ -1,0 +1,6 @@
+{
+  "name": "EduListen - Luyện nghe & Trả lời bằng Giọng nói",
+  "description": "Nền tảng luyện nghe trực tuyến có chức năng ghi âm câu trả lời, giáo viên chấm điểm trực tiếp và theo dõi tiến độ học sinh toàn diện.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
