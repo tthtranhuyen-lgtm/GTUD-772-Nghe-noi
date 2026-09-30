@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, RotateCw, Volume2, VolumeX, Gauge, Sparkles, Volume1 } from 'lucide-react';
+import { Play, Pause, RotateCcw, RotateCw, Volume2, VolumeX, Gauge, Volume1 } from 'lucide-react';
 import { speechService } from '../utils/speechSynthesis';
 import { useApp } from '../context/AppContext';
 
@@ -171,7 +171,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
-  const voiceMeta = speechService.getVoiceDescription('standard', language);
 
   return (
     <div className="bg-slate-900 text-white rounded-2xl p-5 shadow-xl border border-slate-800">
@@ -202,24 +201,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           </button>
         )}
       </div>
-
-      {/* Voice Quality Banner */}
-      {audioType === 'tts' && (
-        <div className="flex items-center justify-between px-3.5 py-2 mb-3 bg-slate-800/70 rounded-xl border border-slate-700/60 text-[11px] text-slate-300">
-          <div className="flex items-center gap-2 truncate">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-semibold text-amber-200">
-              {voiceMeta.title}:
-            </span>
-            <span className="text-slate-300 truncate">
-              {voiceMeta.subtitle}
-            </span>
-          </div>
-          <span className="text-[10px] text-amber-300/90 font-chinese shrink-0 ml-2 font-medium bg-slate-900/60 px-2 py-0.5 rounded border border-slate-700/60">
-            {voiceMeta.chineseLabel}
-          </span>
-        </div>
-      )}
 
       {/* Progress Timeline */}
       <div className="space-y-1.5 mb-4">
