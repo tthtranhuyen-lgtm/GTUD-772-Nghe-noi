@@ -103,10 +103,10 @@ export const INITIAL_STUDENTS: Student[] = [
   },
   {
     id: 'std-10',
-    name: 'Hoàng Minh Trí',
-    chineseName: '黄明智',
+    name: 'Nguyễn Minh Thái',
+    chineseName: '阮明泰',
     studentNumber: 10,
-    email: 'minhtri.hoang@school.edu.vn',
+    email: 'minhthai.nguyen@school.edu.vn',
     avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
     gradeLevel: 'Lớp Tiếng Trung HSK 1-2',
     targetGoal: 'Luyện phát âm rõ ràng, chuẩn ngữ âm Bắc Kinh',
@@ -448,7 +448,7 @@ export const INITIAL_EXERCISES: Exercise[] = [
   {
     id: 'ex-student-10',
     assignedStudentId: 'std-10',
-    title: 'Bài tập 10: Luyện nghe & Thu âm trả lời (Hoàng Minh Trí 黄明智)',
+    title: 'Bài tập 10: Luyện nghe & Thu âm trả lời (Nguyễn Minh Thái 阮明泰)',
     description: 'Hỏi về rút tiền, siêu thị, trung tâm mua sắm, học ngoại ngữ, bố học tiếng Anh và bạn học tiếng Hàn.',
     level: 'Sơ cấp (A1-A2)',
     topic: 'Tiếng Trung giao tiếp',

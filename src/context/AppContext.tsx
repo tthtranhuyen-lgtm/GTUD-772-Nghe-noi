@@ -41,8 +41,8 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Storage version for the 10-student Chinese class (test bot removed)
-const STORAGE_PREFIX = 'edulisten_chinese_class_v4';
+// Storage version for the 10-student Chinese class (student 10 renamed to Nguyễn Minh Thái)
+const STORAGE_PREFIX = 'edulisten_chinese_class_v5';
 const LOCAL_STORAGE_KEY_EXERCISES = `${STORAGE_PREFIX}_exercises`;
 const LOCAL_STORAGE_KEY_SUBMISSIONS = `${STORAGE_PREFIX}_submissions`;
 const LOCAL_STORAGE_KEY_NOTIFICATIONS = `${STORAGE_PREFIX}_notifications`;
@@ -60,13 +60,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [voiceGender, setVoiceGender] = useState<VoiceGender>('standard');
   const [speechSpeed, setSpeechSpeed] = useState<number>(0.88);
 
-  // Initialize data - strictly filter out any legacy test student
+  // Initialize data - strictly filter out legacy test student & ensure student 10 name is Nguyễn Minh Thái
   const [students, setStudents] = useState<Student[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY_STUDENTS);
       if (saved) {
         const parsed: Student[] = JSON.parse(saved);
-        const filtered = parsed.filter(s => s.id !== 'std-test' && !s.isTestUser);
+        const filtered = parsed
+          .filter(s => s.id !== 'std-test' && !s.isTestUser)
+          .map(s => {
+            if (s.id === 'std-10') {
+              return {
+                ...s,
+                name: 'Nguyễn Minh Thái',
+                chineseName: '阮明泰',
+                email: 'minhthai.nguyen@school.edu.vn'
+              };
+            }
+            return s;
+          });
         return filtered.length > 0 ? filtered : INITIAL_STUDENTS;
       }
       return INITIAL_STUDENTS;
@@ -80,7 +92,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY_EXERCISES);
       if (saved) {
         const parsed: Exercise[] = JSON.parse(saved);
-        const filtered = parsed.filter(e => e.id !== 'ex-student-test' && e.assignedStudentId !== 'std-test');
+        const filtered = parsed
+          .filter(e => e.id !== 'ex-student-test' && e.assignedStudentId !== 'std-test')
+          .map(e => {
+            if (e.id === 'ex-student-10' || e.assignedStudentId === 'std-10') {
+              return {
+                ...e,
+                title: 'Bài tập 10: Luyện nghe & Thu âm trả lời (Nguyễn Minh Thái 阮明泰)'
+              };
+            }
+            return e;
+          });
         return filtered.length > 0 ? filtered : INITIAL_EXERCISES;
       }
       return INITIAL_EXERCISES;
