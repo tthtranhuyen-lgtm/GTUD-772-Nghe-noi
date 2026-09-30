@@ -1,7 +1,9 @@
 /**
- * Client-side IndexedDB Audio Storage
- * Supports storing large audio recordings (Blobs) safely without hitting localStorage quotas.
+ * Client-side IndexedDB + Firebase Firestore Audio Storage
+ * Supports storing large audio recordings safely locally and syncing across devices (teacher <-> students).
  */
+import { db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const DB_NAME = 'EduListenAudioDB';
 const DB_VERSION = 1;
@@ -22,9 +24,9 @@ function openDB(): Promise<IDBDatabase> {
 
       request.onupgradeneeded = () => {
         try {
-          const db = request.result;
-          if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME);
+          const idb = request.result;
+          if (!idb.objectStoreNames.contains(STORE_NAME)) {
+            idb.createObjectStore(STORE_NAME);
           }
         } catch (e) {
           reject(e);
@@ -44,49 +46,116 @@ function openDB(): Promise<IDBDatabase> {
   });
 }
 
+export function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+export function dataUrlToBlob(dataUrl: string): Blob {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)?.[1] || 'audio/webm';
+  const binaryString = atob(parts[1]);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mime });
+}
+
 export async function saveAudioRecording(id: string, blob: Blob): Promise<string> {
   memoryCache.set(id, blob);
+
+  // 1. Save to local IndexedDB
   try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
+    const idb = await openDB();
+    await new Promise<void>((resolve, reject) => {
+      const tx = idb.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
       const req = store.put(blob, id);
-      req.onsuccess = () => resolve(id);
+      req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
     });
   } catch (err) {
-    console.warn('Falling back to memory cache for audio:', err);
-    return id;
+    console.warn('Local IndexedDB audio save fallback:', err);
   }
+
+  // 2. Sync to Firebase Firestore so teacher and student can hear each other across devices!
+  try {
+    const dataUrl = await blobToDataUrl(blob);
+    // Only upload if payload size is within safe document limit (< 900KB)
+    if (dataUrl.length < 900000) {
+      await setDoc(
+        doc(db, 'audio_recordings', id),
+        {
+          id,
+          dataUrl,
+          mimeType: blob.type || 'audio/webm',
+          createdAt: Date.now()
+        },
+        { merge: true }
+      );
+    }
+  } catch (err) {
+    console.warn('Could not sync audio recording to Firestore:', err);
+  }
+
+  return id;
 }
 
 export async function getAudioRecording(id: string): Promise<Blob | null> {
+  // 1. Check in-memory cache
   if (memoryCache.has(id)) {
     return memoryCache.get(id) || null;
   }
 
+  // 2. Check local IndexedDB
   try {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readonly');
+    const idb = await openDB();
+    const localBlob = await new Promise<Blob | null>((resolve, reject) => {
+      const tx = idb.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
       const req = store.get(id);
-      req.onsuccess = () => {
-        const result = req.result as Blob | undefined;
-        if (result) {
-          memoryCache.set(id, result);
-          resolve(result);
-        } else {
-          resolve(null);
-        }
-      };
+      req.onsuccess = () => resolve((req.result as Blob) || null);
       req.onerror = () => reject(req.error);
     });
+
+    if (localBlob) {
+      memoryCache.set(id, localBlob);
+      return localBlob;
+    }
   } catch (err) {
-    console.warn('Could not read from IndexedDB:', err);
-    return memoryCache.get(id) || null;
+    console.warn('Could not read from IndexedDB, checking cloud:', err);
   }
+
+  // 3. Fallback: Fetch from Firebase Firestore (for cross-device sharing between teacher & students)
+  try {
+    const docSnap = await getDoc(doc(db, 'audio_recordings', id));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (data && data.dataUrl) {
+        const cloudBlob = dataUrlToBlob(data.dataUrl);
+        memoryCache.set(id, cloudBlob);
+
+        // Cache into local IndexedDB for instant playback next time
+        try {
+          const idb = await openDB();
+          const tx = idb.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).put(cloudBlob, id);
+        } catch (_) {}
+
+        return cloudBlob;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch audio from Firestore:', err);
+  }
+
+  return null;
 }
 
 export async function getAudioObjectUrl(id: string): Promise<string | null> {
@@ -100,7 +169,6 @@ export async function getAudioObjectUrl(id: string): Promise<string | null> {
  * so teachers can immediately press Play and hear speech/tone without needing real recording first.
  */
 export function createSampleAudioBlob(message: string): Blob {
-  // Generate a valid short silent/pleasant audio tone WAV buffer
   const sampleRate = 22050;
   const durationSec = 2.5;
   const numSamples = Math.floor(sampleRate * durationSec);

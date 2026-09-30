@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Bell, UserCheck, GraduationCap, Check, ChevronDown, CheckCheck, RotateCcw, Zap, Sparkles, BookOpen, Camera } from 'lucide-react';
+import { Bell, UserCheck, GraduationCap, Check, ChevronDown, CheckCheck, RotateCcw, Zap, Sparkles, BookOpen, Camera, Cloud, Share2 } from 'lucide-react';
 import { AvatarUploadModal } from './Student/AvatarUploadModal';
 
 interface NavbarProps {
@@ -22,7 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenFeedbackModal }) => {
     markAllNotificationsRead,
     setSelectedExerciseId,
     setSelectedSubmissionId,
-    resetToDefaultClassData
+    resetToDefaultClassData,
+    copyStudentAssignmentLink,
+    isCloudSynced
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -169,6 +171,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenFeedbackModal }) => {
 
         {/* Primary Actions & Role Switching */}
         <div className="flex items-center gap-2.5">
+          {/* Cloud sync status indicator */}
+          <div
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200/80 rounded-full text-[11px] font-semibold"
+            title="Dữ liệu lớp học, ảnh đại diện và bài nộp được đồng bộ đám mây trực tuyến"
+          >
+            <Cloud className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Đồng bộ đám mây</span>
+          </div>
+
           {/* Notifications button (Teacher & Student) */}
           <div className="relative">
             <button
@@ -274,18 +285,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenFeedbackModal }) => {
                   </div>
 
                   {students.map(s => (
-                    <button
+                    <div
                       key={s.id}
-                      onClick={() => {
-                        setActiveStudentId(s.id);
-                        setSelectedExerciseId(null);
-                        setShowStudentDropdown(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-amber-50/50 text-xs transition-colors ${
+                      className={`w-full px-3 py-2 flex items-center justify-between hover:bg-amber-50/50 text-xs transition-colors ${
                         s.id === activeStudent.id ? 'bg-red-50 font-semibold' : ''
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveStudentId(s.id);
+                          setSelectedExerciseId(null);
+                          setShowStudentDropdown(false);
+                        }}
+                        className="flex items-center gap-2.5 flex-1 text-left"
+                      >
                         <span className="w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 bg-slate-200 text-slate-700">
                           {s.studentNumber}
                         </span>
@@ -296,9 +310,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenFeedbackModal }) => {
                           </div>
                           <div className="text-[11px] text-red-700 font-chinese">{s.chineseName}</div>
                         </div>
+                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyStudentAssignmentLink(s.id);
+                          }}
+                          className="p-1 text-slate-400 hover:text-red-700 hover:bg-white rounded transition-colors"
+                          title={`Sao chép link làm bài gửi riêng cho ${s.name}`}
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                        </button>
+                        {s.id === activeStudent.id && <Check className="w-4 h-4 text-red-700 shrink-0" />}
                       </div>
-                      {s.id === activeStudent.id && <Check className="w-4 h-4 text-red-700 shrink-0" />}
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}

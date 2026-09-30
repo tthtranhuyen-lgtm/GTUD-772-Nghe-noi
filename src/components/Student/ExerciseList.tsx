@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Search, Mic, BookOpen, Clock, ChevronRight, CheckCircle2, Clock3, Star, Sparkles, Camera } from 'lucide-react';
+import { Search, Mic, BookOpen, Clock, ChevronRight, CheckCircle2, Clock3, Star, Sparkles, Camera, Share2 } from 'lucide-react';
 import { AvatarUploadModal } from './AvatarUploadModal';
 
 interface ExerciseListProps {
@@ -9,7 +9,7 @@ interface ExerciseListProps {
 }
 
 export const ExerciseList: React.FC<ExerciseListProps> = ({ onSelectExercise, onOpenFeedback }) => {
-  const { exercises, submissions, activeStudent } = useApp();
+  const { exercises, submissions, activeStudent, copyStudentAssignmentLink } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'my_assigned' | 'all'>('my_assigned');
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -239,6 +239,16 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ onSelectExercise, on
                 )}
 
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => copyStudentAssignmentLink(ex.assignedStudentId, ex.id)}
+                    className="px-2.5 py-1.5 text-xs text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1 border border-slate-200"
+                    title="Sao chép link làm bài này gửi học sinh"
+                  >
+                    <Share2 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Gửi link</span>
+                  </button>
+
                   {sub?.status === 'graded' && (
                     <button
                       onClick={() => onOpenFeedback(sub.id)}

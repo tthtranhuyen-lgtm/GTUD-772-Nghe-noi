@@ -8,7 +8,7 @@ interface StudentProgressTrackerProps {
 }
 
 export const StudentProgressTracker: React.FC<StudentProgressTrackerProps> = ({ onOpenFeedback }) => {
-  const { students, addStudent, submissions, exercises, resetToDefaultClassData } = useApp();
+  const { students, addStudent, submissions, exercises, resetToDefaultClassData, copyStudentAssignmentLink } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -238,6 +238,15 @@ export const StudentProgressTracker: React.FC<StudentProgressTrackerProps> = ({ 
                     {stat.avgPronunciation}
                   </span>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => copyStudentAssignmentLink(stat.student.id)}
+                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-red-800 border border-amber-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 shadow-2xs"
+                  title="Sao chép link làm bài gửi riêng cho học sinh này"
+                >
+                  <span>🔗 Gửi link</span>
+                </button>
 
                 <button
                   onClick={() => setSelectedStudent(stat.student)}
