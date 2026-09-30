@@ -52,7 +52,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const STORAGE_PREFIX = 'edulisten_chinese_class_v6';
+const STORAGE_PREFIX = 'edulisten_chinese_class_v7';
 const LOCAL_STORAGE_KEY_EXERCISES = `${STORAGE_PREFIX}_exercises`;
 const LOCAL_STORAGE_KEY_SUBMISSIONS = `${STORAGE_PREFIX}_submissions`;
 const LOCAL_STORAGE_KEY_NOTIFICATIONS = `${STORAGE_PREFIX}_notifications`;
@@ -239,6 +239,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           snapshot.forEach(d => {
             cloudExercises.push(d.data() as Exercise);
           });
+          cloudExercises.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
           if (cloudExercises.length > 0) {
             setExercises(cloudExercises);
             try {
