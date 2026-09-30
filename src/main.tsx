@@ -76,6 +76,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
+  (window as unknown as { __EDULISTEN_MOUNTED__: boolean }).__EDULISTEN_MOUNTED__ = true;
   createRoot(rootElement).render(
     <React.StrictMode>
       <ErrorBoundary>
