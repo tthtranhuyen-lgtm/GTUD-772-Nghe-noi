@@ -90,9 +90,6 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ onSelectExercise, on
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Bài tập Luyện nghe & Thu âm trả lời Tiếng Trung
             </h1>
-            <p className="text-xs text-slate-600 mt-1 max-w-xl leading-relaxed">
-              Nghe các câu hỏi với giọng đọc chuẩn (Nam/Nữ, điều chỉnh tốc độ), sau đó ghi âm câu trả lời trực tiếp. Giáo viên sẽ nghe và gửi lại lời nhận xét bằng giọng nói.
-            </p>
           </div>
         </div>
 
