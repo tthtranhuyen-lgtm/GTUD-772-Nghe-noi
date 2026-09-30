@@ -29,22 +29,38 @@ class SpeechService {
   private voicesCache: SpeechSynthesisVoice[] = [];
 
   constructor() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      this.refreshVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis) {
         this.refreshVoices();
-      };
+        window.speechSynthesis.onvoiceschanged = () => {
+          try {
+            this.refreshVoices();
+          } catch (_) {
+            // ignore
+          }
+        };
+      }
+    } catch (err) {
+      console.warn('SpeechSynthesis initialization bypassed:', err);
     }
   }
 
   public refreshVoices(): SpeechSynthesisVoice[] {
-    if (!this.isSupported()) return [];
-    this.voicesCache = window.speechSynthesis.getVoices();
-    return this.voicesCache;
+    try {
+      if (!this.isSupported()) return [];
+      this.voicesCache = window.speechSynthesis.getVoices() || [];
+      return this.voicesCache;
+    } catch (_) {
+      return [];
+    }
   }
 
   public isSupported(): boolean {
-    return typeof window !== 'undefined' && 'speechSynthesis' in window;
+    try {
+      return typeof window !== 'undefined' && 'speechSynthesis' in window && Boolean(window.speechSynthesis);
+    } catch (_) {
+      return false;
+    }
   }
 
   public getVoices(): SpeechSynthesisVoice[] {

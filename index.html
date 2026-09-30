@@ -4,33 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      // Fix for "Cannot set property fetch of #<Window> which has only a getter"
-      (function() {
+      // Only patch window.fetch if inside an iframe wrapper (e.g. AI Studio dev environment)
+      if (window.self !== window.top) {
         try {
           var originalFetch = window.fetch ? window.fetch.bind(window) : null;
           var currentFetch = originalFetch;
           Object.defineProperty(window, 'fetch', {
-            get: function() {
-              return currentFetch;
-            },
-            set: function(val) {
-              currentFetch = val;
-            },
+            get: function() { return currentFetch; },
+            set: function(val) { currentFetch = val; },
             configurable: true,
             enumerable: true
           });
-        } catch (e) {
-          // ignore if already configured
-        }
+        } catch (_) {}
+      }
 
-        // Prevent uncaught errors from stopping script execution
-        window.addEventListener('error', function(e) {
-          if (e && e.message && e.message.indexOf('fetch') !== -1 && e.message.indexOf('getter') !== -1) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-          }
-        });
-      })();
+      // GitHub Pages clean trailing slash normalization
+      // e.g. https://username.github.io/GTUD-772-Nghe-noi -> https://username.github.io/GTUD-772-Nghe-noi/
+      if (location.hostname.endsWith('github.io')) {
+        var parts = location.pathname.split('/').filter(Boolean);
+        if (parts.length === 1 && !location.pathname.endsWith('/')) {
+          location.replace(location.pathname + '/' + location.search + location.hash);
+        }
+      }
     </script>
     <title>EduListen - Luyện nghe & Trả lời bằng Giọng nói</title>
     <meta name="description" content="Nền tảng luyện nghe trực tuyến có chức năng ghi âm câu trả lời, giáo viên chấm điểm trực tiếp và theo dõi tiến độ học sinh toàn diện." />
@@ -43,7 +38,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
   </head>
   <body class="font-sans antialiased text-slate-900 selection:bg-rose-500/20 selection:text-rose-950 bg-[#faf8f5]">
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading indicator shown only while JavaScript bundle is loading or if unbuilt HTML is served directly -->
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: system-ui, -apple-system, sans-serif; background-color: #faf8f5; color: #1e293b; padding: 24px; text-align: center;">
+        <div style="width: 48px; height: 48px; border: 4px solid #fecdd3; border-top-color: #be123c; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
+        <h2 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 6px 0;">Đang khởi chạy EduListen · 华语学堂</h2>
+        <p style="font-size: 0.85rem; color: #64748b; margin: 0; max-width: 400px; line-height: 1.5;">Hệ thống đang tải tài nguyên lớp học tiếng Trung và bộ âm thanh phát âm...</p>
+        <noscript>
+          <div style="margin-top: 16px; padding: 12px; background: #fff1f2; border: 1px solid #fda4af; border-radius: 8px; font-size: 0.8rem; color: #9f1239;">
+            Trình duyệt của bạn đang tắt JavaScript. Vui lòng bật JavaScript để sử dụng phần mềm.
+          </div>
+        </noscript>
+      </div>
+      <style>
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
